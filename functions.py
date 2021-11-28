@@ -24,10 +24,8 @@ def makeDirectory(directory):
         return error
 
 def mountUSB():
-    mounpoint ="/media/ubuntu/WriteTo"
-    command = "sudo mkdir -p"
+    command = "sudo mount /dev/sdb1 /media/ubuntu/WriteTo"
     command_list = command.split()
-    command_list.append(mounpoint)
     try:
         subprocess.check_output(command_list)
     except subprocess.CalledProcessError as e:
@@ -58,11 +56,10 @@ def cloneDisk():
 
     try:
         diskDup = subprocess.run(
-            ['sudo', 'dd', 'if=/home/test/diskdupe/test.txt', 'conv=sync,noerror', 'status=progress', 'bs=64K'],
+            ['sudo', 'dd', 'if=/dev/sda', 'conv=sync,noerror', 'status=progress', 'bs=64K'],
             check=True, capture_output=True)
-        compression = subprocess.run(['gzip', '-c', ' >' '/home/test/diskdupe/test.txt.gz'],
+        compression = subprocess.run(['gzip', '-c', ' >' '/media/ubuntu/WriteTo/test.img.gz'],
                                      input=diskDup.stdout, capture_output=True)
-        print(diskDup.stderr)
     except subprocess.CalledProcessError as e:
         error = (e.output)
         return error
